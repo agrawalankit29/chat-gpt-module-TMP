@@ -1,0 +1,39 @@
+<html>
+  <head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      const axios = require("axios");
+
+      // Replace YOUR_API_KEY with your actual API key
+      const API_KEY = "YOUR_API_KEY";
+
+      // Function to generate text using the OpenAI API
+      async function generateText(prompt) {
+        const response = await axios.post("https://api.openai.com/v1/engines/text-davinci-002/jobs", {
+          prompt: prompt,
+          max_tokens: 100,
+          n: 1,
+          stop: null,
+          temperature: 0.5,
+        }, {
+          headers: {
+            "Authorization": `Bearer ${API_KEY}`,
+            "Content-Type": "application/json"
+          }
+        });
+  
+        return response.data.choices[0].text;
+      }
+  
+      // Send a message to the chat interface
+      async function sendMessage() {
+        const input = $("#input").val();
+        $("#input").val("");
+        $("#chat").append(`<div class="user-message">You: ${input}</div>`);
+  
+        const generatedText = await generateText(input);
+        $("#chat").append(`<div class="bot-message">Bot: ${generatedText}</div>`);
+      }
+    </script>
+  </head>
+  <body>
